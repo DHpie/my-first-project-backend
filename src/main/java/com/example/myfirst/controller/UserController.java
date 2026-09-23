@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/users")
@@ -24,9 +25,9 @@ public class UserController {
         return Result.success(response);
     }
 
-    @GetMapping("/{id}")
-    public Result<UserResponse> getUserById(@PathVariable Long id) {
-        UserResponse response = userService.getUserById(id);
+    @GetMapping("/{uuid}")
+    public Result<UserResponse> getUserByUuid(@PathVariable UUID uuid) {
+        UserResponse response = userService.getUserByUuid(uuid);
         return Result.success(response);
     }
 
@@ -36,16 +37,16 @@ public class UserController {
         return Result.success(responses);
     }
 
-    @PutMapping("/{id}")
-    public Result<UserResponse> updateUser(@PathVariable Long id,
+    @PutMapping("/{uuid}")
+    public Result<UserResponse> updateUser(@PathVariable UUID uuid,
                                            @Valid @RequestBody UserUpdateRequest request) {
-        UserResponse response = userService.updateUser(id, request);
+        UserResponse response = userService.updateUser(uuid, request);
         return Result.success(response);
     }
 
-    @DeleteMapping("/{id}")
-    public Result<Void> deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
+    @DeleteMapping("/{uuid}")
+    public Result<Void> deleteUser(@PathVariable UUID uuid) {
+        userService.deleteUser(uuid);
         return Result.success();
     }
 }

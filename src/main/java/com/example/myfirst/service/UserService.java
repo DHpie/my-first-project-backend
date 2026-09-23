@@ -5,16 +5,17 @@ import com.example.myfirst.dto.request.UserUpdateRequest;
 import com.example.myfirst.dto.response.UserResponse;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface UserService {
 
     UserResponse createUser(UserCreateRequest request);
 
-    UserResponse getUserById(Long id);
+    UserResponse getUserByUuid(UUID uuid);
 
     List<UserResponse> getAllUsers();
 
-    UserResponse updateUser(Long id, UserUpdateRequest request);
+    UserResponse updateUser(UUID uuid, UserUpdateRequest request);
 
-    void deleteUser(Long id);
+    void deleteUser(UUID uuid);
 }

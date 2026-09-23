@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,9 +32,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserResponse getUserById(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
+    public UserResponse getUserByUuid(UUID uuid) {
+        User user = userRepository.findByUuid(uuid)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with uuid: " + uuid));
         return UserMapper.toResponse(user);
     }
 
@@ -47,9 +48,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserResponse updateUser(Long id, UserUpdateRequest request) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
+    public UserResponse updateUser(UUID uuid, UserUpdateRequest request) {
+        User user = userRepository.findByUuid(uuid)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with uuid: " + uuid));
         UserMapper.updateEntity(user, request);
         User updated = userRepository.save(user);
         return UserMapper.toResponse(updated);
@@ -57,10 +58,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void deleteUser(Long id) {
-        if (!userRepository.existsById(id)) {
-            throw new EntityNotFoundException("User not found with id: " + id);
+    public void deleteUser(UUID uuid) {
+        if (!userRepository.existsByUuid(uuid)) {
+            throw new EntityNotFoundException("User not found with uuid: " + uuid);
         }
-        userRepository.deleteById(id);
+        User user = userRepository.findByUuid(uuid)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with uuid: " + uuid));
+        userRepository.delete(user);
     }
 }
