@@ -1,7 +1,7 @@
 package com.example.myfirst.common;
 
 /**
- * 被屏蔽时抛出的异常（HTTP 403）
+ * 权限不足异常 —— 被屏蔽或访问非本人资源时抛出（HTTP 403）
  */
 public class ForbiddenException extends RuntimeException {
 

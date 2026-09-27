@@ -10,9 +10,9 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponse {
+public class ProfileResponse {
 
-    private String uuid;
+    private String id;
     private String username;
     private String email;
     private String nickname;
