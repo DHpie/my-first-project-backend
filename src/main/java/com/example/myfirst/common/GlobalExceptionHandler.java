@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.stream.Collectors;
 
@@ -30,6 +31,27 @@ public class GlobalExceptionHandler {
     public Result<Void> handleEntityNotFoundException(EntityNotFoundException ex) {
         log.warn("Entity not found: {}", ex.getMessage());
         return Result.error(ResultCode.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(FileUploadException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Result<Void> handleFileUploadException(FileUploadException ex) {
+        log.warn("File upload failed: {}", ex.getMessage());
+        return Result.error(ResultCode.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Result<Void> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex) {
+        log.warn("File size exceeded: {}", ex.getMessage());
+        return Result.error(ResultCode.BAD_REQUEST, "File size must be under 2MB");
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Result<Void> handleIllegalArgumentException(IllegalArgumentException ex) {
+        log.warn("Illegal argument: {}", ex.getMessage());
+        return Result.error(ResultCode.BAD_REQUEST, ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
