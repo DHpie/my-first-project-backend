@@ -3,12 +3,14 @@ package com.example.myfirst.service.impl;
 import com.example.myfirst.dto.request.UserCreateRequest;
 import com.example.myfirst.dto.request.UserUpdateRequest;
 import com.example.myfirst.dto.response.UserResponse;
+import com.example.myfirst.dto.response.UserSearchResultResponse;
 import com.example.myfirst.entity.User;
 import com.example.myfirst.mapper.UserMapper;
 import com.example.myfirst.repository.UserRepository;
 import com.example.myfirst.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,5 +67,21 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByUuid(uuid)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with uuid: " + uuid));
         userRepository.delete(user);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserSearchResultResponse> searchUsersByNickname(String nickname, Long excludeUserId) {
+        if (nickname == null || nickname.length() < 2) {
+            throw new IllegalArgumentException("Search query must be at least 2 characters");
+        }
+        List<User> users = userRepository.findByNicknameContainingAndIdNot(
+                nickname, excludeUserId, PageRequest.of(0, 10));
+        return users.stream()
+                .map(user -> new UserSearchResultResponse(
+                        user.getId(),
+                        user.getNickname() != null ? user.getNickname() : user.getUsername(),
+                        user.getAvatarUrl()))
+                .collect(Collectors.toList());
     }
 }
