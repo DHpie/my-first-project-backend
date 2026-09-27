@@ -5,10 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartException;
 
 import java.util.stream.Collectors;
 
@@ -33,9 +35,9 @@ public class GlobalExceptionHandler {
         return Result.error(ResultCode.NOT_FOUND, ex.getMessage());
     }
 
-    @ExceptionHandler(FileUploadException.class)
+    @ExceptionHandler(MultipartException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Result<Void> handleFileUploadException(FileUploadException ex) {
+    public Result<Void> handleFileUploadException(MultipartException ex) {
         log.warn("File upload failed: {}", ex.getMessage());
         return Result.error(ResultCode.BAD_REQUEST, ex.getMessage());
     }
@@ -52,6 +54,13 @@ public class GlobalExceptionHandler {
     public Result<Void> handleIllegalArgumentException(IllegalArgumentException ex) {
         log.warn("Illegal argument: {}", ex.getMessage());
         return Result.error(ResultCode.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Result<Void> handleMissingRequestHeaderException(MissingRequestHeaderException ex) {
+        log.warn("Missing request header: {}", ex.getMessage());
+        return Result.error(ResultCode.BAD_REQUEST, "Missing required header: " + ex.getHeaderName());
     }
 
     @ExceptionHandler(Exception.class)
