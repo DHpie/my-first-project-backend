@@ -1,5 +1,6 @@
 package com.example.myfirst.service;
 
+import com.example.myfirst.common.ForbiddenException;
 import com.example.myfirst.dto.response.NotificationListResponse;
 import com.example.myfirst.dto.response.NotificationResponse;
 import com.example.myfirst.dto.response.UnreadCountResponse;
@@ -255,12 +256,12 @@ class NotificationServiceImplTest {
         }
 
         @Test
-        @DisplayName("不属于当前用户 → 抛出 IllegalArgumentException")
+        @DisplayName("不属于当前用户 → 抛出 ForbiddenException")
         void shouldThrowWhenNotOwner() {
             when(notificationRepository.findByUuid(notificationUuid))
                     .thenReturn(Optional.of(sampleNotification));
 
-            assertThrows(IllegalArgumentException.class,
+            assertThrows(ForbiddenException.class,
                     () -> notificationService.markAsRead(notificationUuid.toString(), 999L));
         }
     }

@@ -133,16 +133,16 @@ class NotificationControllerTest {
         }
 
         @Test
-        @DisplayName("不属于当前用户 → 400 (IllegalArgumentException)")
-        void shouldReturn400WhenNotOwner() throws Exception {
+        @DisplayName("不属于当前用户 → 403 Forbidden")
+        void shouldReturn403WhenNotOwner() throws Exception {
             String uuid = UUID.randomUUID().toString();
-            doThrow(new IllegalArgumentException("Notification does not belong to current user"))
+            doThrow(new com.example.myfirst.common.ForbiddenException("Notification does not belong to current user"))
                     .when(notificationService).markAsRead(eq(uuid), eq(USER_ID));
 
             mockMvc.perform(put("/api/notifications/" + uuid + "/read")
                             .header(USER_HEADER, USER_ID))
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.code").value(400));
+                    .andExpect(status().isForbidden())
+                    .andExpect(jsonPath("$.code").value(403));
         }
     }
 

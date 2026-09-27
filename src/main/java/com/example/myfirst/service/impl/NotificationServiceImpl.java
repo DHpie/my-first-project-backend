@@ -1,5 +1,6 @@
 package com.example.myfirst.service.impl;
 
+import com.example.myfirst.common.ForbiddenException;
 import com.example.myfirst.dto.response.NotificationListResponse;
 import com.example.myfirst.dto.response.NotificationResponse;
 import com.example.myfirst.dto.response.UnreadCountResponse;
@@ -115,7 +116,7 @@ public class NotificationServiceImpl implements NotificationService {
 
         // 验证通知属于当前用户
         if (!notification.getUserId().equals(userId)) {
-            throw new IllegalArgumentException("Notification does not belong to current user");
+            throw new ForbiddenException("Notification does not belong to current user");
         }
 
         notification.setIsRead(true);
