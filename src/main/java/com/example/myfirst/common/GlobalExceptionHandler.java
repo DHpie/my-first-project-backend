@@ -77,20 +77,6 @@ public class GlobalExceptionHandler {
         return Result.error(ResultCode.BAD_REQUEST, "File size must be under 2MB");
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Result<Void> handleIllegalArgumentException(IllegalArgumentException ex) {
-        log.warn("Illegal argument: {}", ex.getMessage());
-        return Result.error(ResultCode.BAD_REQUEST, ex.getMessage());
-    }
-
-    @ExceptionHandler(ForbiddenException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public Result<Void> handleForbiddenException(ForbiddenException ex) {
-        log.warn("Forbidden access: {}", ex.getMessage());
-        return Result.error(ResultCode.FORBIDDEN, ex.getMessage());
-    }
-
     @ExceptionHandler(MissingRequestHeaderException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Result<Void> handleMissingRequestHeaderException(MissingRequestHeaderException ex) {

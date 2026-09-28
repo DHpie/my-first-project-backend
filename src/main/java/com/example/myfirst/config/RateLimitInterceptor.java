@@ -29,6 +29,11 @@ public class RateLimitInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        // 仅限制 POST 请求（发送消息），GET 请求（获取消息历史）不限流
+        if (!"POST".equalsIgnoreCase(request.getMethod())) {
+            return true;
+        }
+
         Long userId = CurrentUserUtil.getUserId(request);
         if (userId == null) {
             return true; // 未认证请求由其他处理器处理
