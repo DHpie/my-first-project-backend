@@ -93,6 +93,10 @@ public class AiChatServiceImpl implements AiChatService {
 
         return chatModel.stream(prompt)
                 .flatMap(response -> {
+                    if (response.getResult() == null || response.getResult().getOutput() == null) {
+                        log.warn("Received null result from AI model, skipping chunk");
+                        return Flux.empty();
+                    }
                     String content = response.getResult().getOutput().getText();
                     if (content != null) {
                         fullReply.append(content);
