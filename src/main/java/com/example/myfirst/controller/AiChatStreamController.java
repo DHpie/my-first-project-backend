@@ -15,7 +15,6 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Slf4j
 @RestController
@@ -24,7 +23,7 @@ import java.util.concurrent.Executors;
 public class AiChatStreamController {
 
     private final AiChatService aiChatService;
-    private final ExecutorService executor = Executors.newCachedThreadPool();
+    private final ExecutorService aiChatExecutor;
 
     @PostMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter streamChat(
@@ -33,7 +32,7 @@ public class AiChatStreamController {
         Long userId = CurrentUserUtil.requireUserId(httpRequest);
         SseEmitter emitter = new SseEmitter(60_000L); // 60s timeout
 
-        executor.execute(() -> {
+        aiChatExecutor.execute(() -> {
             try {
                 aiChatService.streamMessage(userId, request.getMessage(), request.getConversationId())
                         .doOnNext(token -> {
@@ -46,8 +45,7 @@ public class AiChatStreamController {
                         })
                         .doOnComplete(() -> {
                             try {
-                                var conv = aiChatService.getChatHistory(userId);
-                                Long convId = conv.getConversationId();
+                                Long convId = aiChatService.getActiveConversationId(userId);
                                 emitter.send(SseEmitter.event()
                                         .data("{\"content\":\"\",\"done\":true,\"conversationId\":" + convId + "}"));
                                 emitter.complete();

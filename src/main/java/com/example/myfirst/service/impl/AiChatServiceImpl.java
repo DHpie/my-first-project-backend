@@ -47,7 +47,9 @@ public class AiChatServiceImpl implements AiChatService {
         // 1. Find or create active conversation
         AiConversation conversation;
         if (conversationId != null) {
+            // IDOR 防护：验证 conversation 属于当前用户
             conversation = conversationRepository.findById(conversationId)
+                    .filter(c -> c.getUserId().equals(userId))
                     .orElseThrow(() -> new IllegalArgumentException("Conversation not found"));
         } else {
             conversation = conversationRepository.findActiveByUserId(userId)
@@ -131,6 +133,14 @@ public class AiChatServiceImpl implements AiChatService {
                     return new AiChatHistoryResponse(conv.getId(), responseMessages, totalCount > HISTORY_LIMIT);
                 })
                 .orElse(new AiChatHistoryResponse(null, List.of(), false));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long getActiveConversationId(Long userId) {
+        return conversationRepository.findActiveByUserId(userId)
+                .map(AiConversation::getId)
+                .orElse(null);
     }
 
     @Override

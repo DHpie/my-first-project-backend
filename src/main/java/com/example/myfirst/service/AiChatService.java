@@ -9,5 +9,7 @@ public interface AiChatService {
 
     AiChatHistoryResponse getChatHistory(Long userId);
 
+    Long getActiveConversationId(Long userId);
+
     void archiveConversation(Long userId);
 }

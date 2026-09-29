@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -20,6 +21,9 @@ class AiChatStreamControllerTest {
 
     @Mock
     private AiChatService aiChatService;
+
+    @Mock
+    private ExecutorService aiChatExecutor;
 
     @InjectMocks
     private AiChatStreamController controller;
