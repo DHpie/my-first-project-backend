@@ -15,6 +15,22 @@ spring:
     time-zone: Asia/Shanghai
     default-property-inclusion: non_null
 
+  ai:
+    openai:
+      base-url: https://dashscope.aliyuncs.com/compatible-mode
+      api-key: ${DASHSCOPE_API_KEY:}
+      chat:
+        options:
+          model: qwen-plus
+          temperature: 0.7
+
 app:
   upload:
     dir: uploads/avatars
+  ai:
+    system-prompt: >
+      You are ChinaBuddy, an expert AI travel assistant specializing in China travel.
+      Your knowledge covers destinations, cuisine, culture, transportation, accommodation,
+      and local customs across China. Be friendly, concise, and practical.
+      Always respond in English unless the user writes in another language.
+      Keep responses under 200 words unless the user asks for more detail.
